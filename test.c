@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define XDIM 10
-#define YDIM 10
+#define XDIM 100
+#define YDIM 100
 
 struct Params
 { 
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 	{
 		for ( iy = 0; iy < YDIM; iy++ )
 		{
-			printf("%1.1f ", new_u[ix][iy]);	
+			printf("%8.3f \n", old_u[ix][iy]);
 		}
 		printf("\n");
 	}
@@ -78,25 +78,36 @@ void initdata(double *u1, char* fname)
 {
 	int ix, iy;
 	FILE* fp;
+    
+    char buffer[4096] ;
+    char *record,*line;
+    double item;
 
 	fp = fopen(fname,"r");
 
 	if ( !fp )
 	{
-		printf("File %s could not be found",fname);
+		printf("File %s could not be found", fname);
 	} 
 	else
 	{
-		printf("File %s open\n", fname);
-		for ( ix = 0; ix < XDIM ; ix++ )
-		{
-			for ( iy = 0; iy < YDIM; iy++ )
-			{
-				*((u1+YDIM*ix)+iy) = (double)1.1*ix*iy;
-			}
+        printf("File %s open\n", fname);
+        for ( ix = 0; ix < XDIM ; ix++ )
+        {
+            for ( iy = 0; iy < YDIM; iy++ )
+            {
+                if ((line = fgets(buffer, sizeof(buffer), fp)) != NULL)
+                {
+                    // adding random values for testing
+                    // *((u1+YDIM*ix)+iy) = (double)1.1*ix*iy;
+                    record = strtok(line,",");
+                    record = strtok(NULL,",");
+                    *((u1+YDIM*ix)+iy) = atof(record);
+                }
+            }
 		
-		}
-		               
+        }
+        
 	}
 
 
