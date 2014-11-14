@@ -94,20 +94,18 @@ void initdata(double *u1, char* fname)
         printf("File %s open\n", fname);
         for ( ix = 0; ix < XDIM ; ix++ )
         {
+            line = fgets(buffer, sizeof(buffer), fp);
+            record = strtok(line,",");
             for ( iy = 0; iy < YDIM; iy++ )
             {
-                if ((line = fgets(buffer, sizeof(buffer), fp)) != NULL)
-                {
                     // adding random values for testing
                     // *((u1+YDIM*ix)+iy) = (double)1.1*ix*iy;
-                    record = strtok(line,",");
+                
                     record = strtok(NULL,",");
                     *((u1+YDIM*ix)+iy) = atof(record);
-                }
+
             }
-		
         }
-        
 	}
 
 
