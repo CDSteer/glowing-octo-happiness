@@ -90,8 +90,15 @@ int main(int argc, char *argv[])
 
 		for (i=1; i<numtasks; i++) {
 			source = i;
-			// MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
+			MPI_Recv(&offset, 1, MPI_INT, MPI_ANY_SOURCE, tag1, MPI_COMM_WORLD, &status);
 			MPI_Recv(&new_u, XDIM*YDIM, MPI_DOUBLE, MPI_ANY_SOURCE, tag2, MPI_COMM_WORLD, &status);
+			nodeoffset = offset;
+			for(i = nodeoffset; i < num_rows_received; i++) {
+	        	for(j = 0; j < YDIM; j++) {
+	            	//partial_sum += old_u2[i][j];
+	            	printf("element from %d: %1.1f\n", taskid, old_u[i][j]);
+	        	}
+        	}
 		}
 		
 
@@ -150,16 +157,13 @@ int main(int argc, char *argv[])
     	* and send array3 to the root process. */
    		// 
    		// partial_sum = 0;
-        for(i = nodeoffset; i < num_rows_received; i++) {
-        	for(j = 0; j < YDIM; j++) {
-            	//partial_sum += old_u2[i][j];
-            	printf("element from %d: %1.1f\n", taskid, old_u[i][j]);
-        	}
-        }
+        
         // printf("Process %d sum: %d\n", taskid, partial_sum);
         //update(num_rows_received, YDIM, &new_u[0][0], *old_u);
 
+   		MPI_Send(&offset, 1, MPI_INT, MASTER, tag1, MPI_COMM_WORLD);
    		MPI_Send(&old_u, chunksize*YDIM, MPI_DOUBLE, MASTER, tag2, MPI_COMM_WORLD);
+
 
 
 	}
