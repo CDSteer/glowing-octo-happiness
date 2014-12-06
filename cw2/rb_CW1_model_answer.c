@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 		for (i=1; i<numtasks; i++) {
 			source = i;
 			// MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
-			MPI_Recv(&new_u, chunksize*YDIM, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+			MPI_Recv(&new_u, chunksize*YDIM, MPI_DOUBLE, MPI_ANY_SOURCE, tag2, MPI_COMM_WORLD, &status);
 		}
 		
 
