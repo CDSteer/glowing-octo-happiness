@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	
 	MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
 	MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
-	printf("number of tasks: %s\n", &numtasks);
+	printf("number of tasks: %d\n", &numtasks);
 	printf ("MPI task %d has started...\n", taskid);
 	chunksize = (XDIM / numtasks);
 	tag2 = 1;
