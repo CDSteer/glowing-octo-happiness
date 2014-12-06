@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <mpi.h>
-#define XDIM 100
-#define YDIM 100
+#define XDIM 10
+#define YDIM 10
 #define MASTER 0
 
 struct Params
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 	MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
 	ierr = MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 	printf ("MPI task %d has started...\n", taskid);
-	chunksize = (100 / numtasks);
+	chunksize = (XDIM / numtasks);
 	tag2 = 1;
 	tag1 = 2;
 	if (taskid == MASTER){
