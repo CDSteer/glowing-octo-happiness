@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
    		// update(num_rows_received, YDIM, &new_u[0][0], *old_u2);
    		// partial_sum = 0;
         for(i = nodeoffset; i < num_rows_received; i++) {
-        	for(j = 0; j < YDIM-2; j++) {
+        	for(j = 0; j < YDIM; j++) {
             	//partial_sum += old_u2[i][j];
             	printf("element from %d: %1.1f\n", taskid, old_u2[i][j]);
         	}
