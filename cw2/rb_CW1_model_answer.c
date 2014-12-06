@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	MPI_Status status;
 	
 	MPI_Init(&argc, &argv);
-	MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
+	// MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 	printf("%s", &numtasks);
 	double old_u[XDIM][YDIM];
 	double old_u2[XDIM][YDIM];
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	int ix, iy, iz, it, ts; /* iterators */
 	char buf[256], *str_end=".dat";
 	
-	MPI_Comm_rank(MPI_COMM_WORLD,&taskid);
+	MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
 	ierr = MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 	printf ("MPI task %d has started...\n", taskid);
 	chunksize = (100 / numtasks);
