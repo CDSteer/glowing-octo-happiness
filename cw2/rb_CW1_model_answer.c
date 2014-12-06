@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 		for (i=1; i<numtasks; i++) {
 			source = i;
 			// MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
-			// MPI_Recv(&new_u, chunksize_returned, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+			MPI_Recv(&new_u, chunksize*YDIM, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		}
 		
 
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
    		nodeoffset = offset;
    		/* Do something with array2 here, placing the result in array3,
     	* and send array3 to the root process. */
-   		// update(num_rows_received, YDIM, &new_u[0][0], *old_u2);
+   		// 
    		// partial_sum = 0;
         for(i = nodeoffset; i < num_rows_received; i++) {
         	for(j = 0; j < YDIM; j++) {
@@ -156,8 +156,9 @@ int main(int argc, char *argv[])
         	}
         }
         // printf("Process %d sum: %d\n", taskid, partial_sum);
+        update(num_rows_received, YDIM, &new_u[0][0], *old_u);
 
-   		// ierr = MPI_Send( &new_u, num_rows_to_return, MPI_DOUBLE, MASTER, tag2, MPI_COMM_WORLD);
+   		MPI_Send(&new_u, num_rows_to_return, MPI_DOUBLE, MASTER, tag2, MPI_COMM_WORLD);
 
 
 	}
