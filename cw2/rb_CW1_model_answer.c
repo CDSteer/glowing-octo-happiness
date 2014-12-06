@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 		/* Initialize grid from input file */
 		printf("Initializing grid from input file:\n");
 
-		avg_rows_per_process = XDIM / numtasks-1;
+		// avg_rows_per_process = XDIM / numtasks-1;
 
 		initdata(XDIM, YDIM, &old_u[0][0]);
 		
@@ -78,13 +78,13 @@ int main(int argc, char *argv[])
 		 	// MPI_Send(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
 			// MPI_Send(temp_u, chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
 
-			start_row = dest * avg_rows_per_process + 1;
-            end_row   = (dest + 1)*avg_rows_per_process;
+			start_row = 0;
+            end_row   = chunksize;
 
-            if((XDIM - end_row) < avg_rows_per_process)
-               end_row = XDIM - 1;
+            // if((XDIM - end_row) < avg_rows_per_process)
+            //    end_row = XDIM - 1;
 
-            num_rows_to_send = end_row - start_row + 1;
+            num_rows_to_send = chunksize;
 
 			ierr = MPI_Send( &num_rows_to_send, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
       		ierr = MPI_Send( &old_u[start_row][YDIM], num_rows_to_send, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
