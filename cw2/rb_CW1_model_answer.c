@@ -93,7 +93,8 @@ int main(int argc, char *argv[])
 			MPI_Recv(&offset, 1, MPI_INT, MPI_ANY_SOURCE, tag1, MPI_COMM_WORLD, &status);
 			MPI_Recv(&old_u, chunksize*YDIM, MPI_DOUBLE, MPI_ANY_SOURCE, tag2, MPI_COMM_WORLD, &status);
 			nodeoffset = offset;
-			for(i = nodeoffset; i < nodeoffset+chunksize_returned; i++) {
+			num_rows_received = chunksize;  
+			for(i = nodeoffset; i < num_rows_received; i++) {
 	        	for(j = 0; j < YDIM; j++) {
 	            	//partial_sum += old_u2[i][j];
 	            	printf("element from %d: %1.1f\n", taskid, old_u[i][j]);
