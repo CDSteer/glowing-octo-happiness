@@ -86,20 +86,20 @@ int main(int argc, char *argv[])
 
             num_rows_to_send = end_row - start_row + 1;
 
-			ierr = MPI_Send( &offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
-      		ierr = MPI_Send( &old_u[offset][YDIM], chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
+			ierr = MPI_Send( &num_rows_to_send, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
+      		ierr = MPI_Send( &old_u[start_row][YDIM], num_rows_to_send, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
 
 		  printf("Sent %d elements to task %d offset= %d\n",chunksize,dest,offset);
-		  offset = offset + chunksize;
+		  // offset = offset + chunksize;
 		}
 		
-		offset = 100-(100%(numtasks-1));
-		for (i = offset; i <= offset+chunksize; i++) {
-		  for (j = 1; j <= YDIM; j++) {
-		    // temp_u[i][j] = old_u[i][j];
-		    // printf("%f\n", temp_u[i][j]);
-		  }
-		}
+		// offset = 100-(100%(numtasks-1));
+		// for (i = offset; i <= offset+chunksize; i++) {
+		//   for (j = 1; j <= YDIM; j++) {
+		//     // temp_u[i][j] = old_u[i][j];
+		//     // printf("%f\n", temp_u[i][j]);
+		//   }
+		// }
 
 
 
@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
 
    		/* Do something with array2 here, placing the result in array3,
     	* and send array3 to the root process. */
-   		update(offset, YDIM, &new_u[0][0], *old_u2);
+   		update(num_rows_received, YDIM, &new_u[0][0], *old_u2);
 
    		ierr = MPI_Send( &new_u, num_rows_to_return, MPI_FLOAT, MASTER, tag2, MPI_COMM_WORLD);
 
