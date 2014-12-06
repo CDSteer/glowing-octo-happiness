@@ -4,7 +4,7 @@
 #include "mpi.h"
 
 int malloc2dchar(char ***array, int n, int m) {
-
+    int i;
     /* allocate the n*m contiguous items */
     char *p = (char *)malloc(n*m*sizeof(char));
     if (!p) return -1;
@@ -17,7 +17,7 @@ int malloc2dchar(char ***array, int n, int m) {
     }
 
     /* set up the pointers into the contiguous memory */
-    for (int i=0; i<n; i++)
+    for ( i=0; i<n; i++)
        (*array)[i] = &(p[i*m]);
 
     return 0;
@@ -34,6 +34,7 @@ int free2dchar(char ***array) {
 }
 
 int main(int argc, char **argv) {
+    int i;
     char **global, **local;
     const int gridsize=10; // size of grid
     const int procgridsize=2;  // size of process grid
@@ -45,7 +46,7 @@ int main(int argc, char **argv) {
 
 
     if (size != procgridsize*procgridsize) {
-        fprintf(stderr,"%s: Only works with np=%d for now\n", argv[0], procgridsize);
+        fprintf(stderr,"%s: Only works with np=%d for nn", argv[0], procgridsize);
         MPI_Abort(MPI_COMM_WORLD,1);
     }
 
@@ -53,15 +54,15 @@ int main(int argc, char **argv) {
     if (rank == 0) {
         /* fill in the array, and print it */
         malloc2dchar(&global, gridsize, gridsize);
-        for (int i=0; i<gridsize; i++) {
-            for (int j=0; j<gridsize; j++)
+        for ( i=0; i<gridsize; i++) {
+            for ( j=0; j<gridsize; j++)
                 global[i][j] = '0'+(3*i+j)%10;
         }
 
 
         printf("Global array is:\n");
-        for (int i=0; i<gridsize; i++) {
-            for (int j=0; j<gridsize; j++)
+        for ( i=0; i<gridsize; i++) {
+            for ( j=0; j<gridsize; j++)
                 putchar(global[i][j]);
 
             printf("\n");
@@ -89,10 +90,10 @@ int main(int argc, char **argv) {
     int displs[procgridsize*procgridsize];
 
     if (rank == 0) {
-        for (int i=0; i<procgridsize*procgridsize; i++) sendcounts[i] = 1;
+        for ( i=0; i<procgridsize*procgridsize; i++) sendcounts[i] = 1;
         int disp = 0;
-        for (int i=0; i<procgridsize; i++) {
-            for (int j=0; j<procgridsize; j++) {
+        for ( i=0; i<procgridsize; i++) {
+            for ( j=0; j<procgridsize; j++) {
                 displs[i*procgridsize+j] = disp;
                 disp += 1;
             }
@@ -107,12 +108,12 @@ int main(int argc, char **argv) {
 
     /* now all processors print their local data: */
 
-    for (int p=0; p<size; p++) {
+    for ( p=0; p<size; p++) {
         if (rank == p) {
             printf("Local process on rank %d is:\n", rank);
-            for (int i=0; i<gridsize/procgridsize; i++) {
+            for ( i=0; i<gridsize/procgridsize; i++) {
                 putchar('|');
-                for (int j=0; j<gridsize/procgridsize; j++) {
+                for ( j=0; j<gridsize/procgridsize; j++) {
                     putchar(local[i][j]);
                 }
                 printf("|\n");
@@ -122,8 +123,8 @@ int main(int argc, char **argv) {
     }
 
     /* now each processor has its local array, and can process it */
-    for (int i=0; i<gridsize/procgridsize; i++) {
-        for (int j=0; j<gridsize/procgridsize; j++) {
+    for ( i=0; i<gridsize/procgridsize; i++) {
+        for ( j=0; j<gridsize/procgridsize; j++) {
             local[i][j] = 'A' + rank;
         }
     }
@@ -141,8 +142,8 @@ int main(int argc, char **argv) {
 
     if (rank == 0) {
         printf("Processed grid:\n");
-        for (int i=0; i<gridsize; i++) {
-            for (int j=0; j<gridsize; j++) {
+        for ( i=0; i<gridsize; i++) {
+            for ( j=0; j<gridsize; j++) {
                 putchar(global[i][j]);
             }
             printf("\n");
