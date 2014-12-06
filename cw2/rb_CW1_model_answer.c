@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 		
 	} else {
 
-		// printf("Process %d said: Hello!\n", taskid);
+		printf("Process %d said: Hello!\n", taskid);
 		//printf("%d\n",&old_u[0][0]);
 		/* Receive my portion of array from the master task */
 		// source = MASTER;
