@@ -69,27 +69,11 @@ int main(int argc, char *argv[])
 		
 		offset = 0;
 		for (dest=1; dest<numtasks; dest++) {
-		  // for (i = offset; i <= offset+chunksize; i++) {
-		  //   for (j = 1; j <= YDIM; j++) {
-		  //     temp_u[i][j] = old_u[i][j];
-		  //     //printf("%f\n", temp_u[i][j]);
-		  //   }
-		  // }
-		 	// MPI_Send(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
-			// MPI_Send(temp_u, chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
-
-            end_row   = chunksize;
-
-            // if((XDIM - end_row) < avg_rows_per_process)
-            //    end_row = XDIM - 1;
-
-            num_rows_to_send = chunksize;
-
 			ierr = MPI_Send( &offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
-      		ierr = MPI_Send( &old_u[offset][YDIM], num_rows_to_send, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
+      		ierr = MPI_Send( &old_u[offset][YDIM], chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
 
-		  printf("Sent %d elements to task %d offset= %d\n", chunksize, dest, offset);
-		  offset = offset + chunksize;
+			printf("Sent %d elements to task %d offset= %d\n", chunksize, dest, offset);
+			offset = offset + chunksize;
 		}
 		
 		offset = 100-(100%(numtasks-1));
@@ -104,8 +88,8 @@ int main(int argc, char *argv[])
 
 		for (i=1; i<numtasks; i++) {
 			source = i;
-			//MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
-			MPI_Recv(&new_u, chunksize_returned, MPI_FLOAT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+			// MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
+			// MPI_Recv(&new_u, chunksize_returned, MPI_FLOAT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		}
 		
 
