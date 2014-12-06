@@ -141,8 +141,8 @@ int main(int argc, char *argv[])
 		double temp_u2[chunksize][YDIM];
 		
 
-		printf("hello\n");
-		printf("%d\n",&old_u[0][0]);
+		printf("Process %d said: Hello!\n", taskid);
+		//printf("%d\n",&old_u[0][0]);
 		/* Receive my portion of array from the master task */
 		// source = MASTER;
 		//MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
