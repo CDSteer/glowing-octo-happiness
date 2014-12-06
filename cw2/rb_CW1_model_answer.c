@@ -69,9 +69,10 @@ int main(int argc, char *argv[])
 		
 		offset = 0;
 		for (dest=1; dest<numtasks; dest++) {
-			ierr = MPI_Send( &offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
-      		ierr = MPI_Send( &old_u[offset][YDIM], chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
-
+			for ( ix = offset; ix < offset+numOfRows; ix++ ){
+				ierr = MPI_Send( &offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
+      			ierr = MPI_Send( &old_u[offset][YDIM], chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
+      		}
 			printf("Sent %d elements to task %d offset= %d\n", chunksize, dest, offset);
 			offset = offset + chunksize;
 		}
@@ -83,8 +84,6 @@ int main(int argc, char *argv[])
             	// printf("element %d: %1.1f\n", taskid, old_u[i][j]);
         	}
         }
-
-
 
 		for (i=1; i<numtasks; i++) {
 			source = i;
