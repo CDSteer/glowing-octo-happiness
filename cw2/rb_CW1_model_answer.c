@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 
             num_rows_to_send = chunksize;
 
-			ierr = MPI_Send( &num_rows_to_send, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
+			ierr = MPI_Send( &offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
       		ierr = MPI_Send( &old_u[offset][YDIM], num_rows_to_send, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
 
 		  printf("Sent %d elements to task %d offset= %d\n", chunksize, dest, offset);
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
 
 		// MPI_Reduce(&mysum, &sum, 1, MPI_FLOAT, MPI_SUM, MASTER, MPI_COMM_WORLD);
 
-		ierr = MPI_Recv( &num_rows_to_receive, 1 , MPI_INT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		ierr = MPI_Recv( &offset, 1 , MPI_INT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
    		ierr = MPI_Recv( &old_u2, num_rows_to_receive, MPI_FLOAT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
     	* and send array3 to the root process. */
    		// update(num_rows_received, YDIM, &new_u[0][0], *old_u2);
    		partial_sum = 0;
-         for(i = 0; i < num_rows_received; i++) {
+         for(i = offset; i < num_rows_received; i++) {
          	for(j = 0; j < YDIM-2; j++) {
             	//partial_sum += old_u2[i][j];
             	printf("element: %1.1f\n",*(old_u2+i*(YDIM-2)+j));
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
          }
          printf("Process %d sum: %d\n", taskid, partial_sum);
 
-   		ierr = MPI_Send( &new_u, num_rows_to_return, MPI_FLOAT, MASTER, tag2, MPI_COMM_WORLD);
+   		// ierr = MPI_Send( &new_u, num_rows_to_return, MPI_FLOAT, MASTER, tag2, MPI_COMM_WORLD);
 
 
 	}
