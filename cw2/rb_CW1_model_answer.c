@@ -40,7 +40,6 @@ int main(int argc, char *argv[])
 	// MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 	printf("%s", &numtasks);
 	double old_u[XDIM][YDIM];
-	double old_u2[XDIM][YDIM];
 	double new_u[XDIM][YDIM];
 	int ix, iy, iz, it, ts; /* iterators */
 	char buf[256], *str_end=".dat";
@@ -120,7 +119,7 @@ int main(int argc, char *argv[])
 		}
 		
 	} else {
-
+		double old_u2[chunksize][YDIM];
 		// printf("Process %d said: Hello!\n", taskid);
 		//printf("%d\n",&old_u[0][0]);
 		/* Receive my portion of array from the master task */
@@ -161,9 +160,6 @@ int main(int argc, char *argv[])
 	}
 	MPI_Finalize();
 }
-
-
-
 
 /***
 *  update: computes new values for timestep t+delta_t
