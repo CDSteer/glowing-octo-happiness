@@ -8,8 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <mpi.h>
 #define XDIM 100
 #define YDIM 100
+#define MASTER 0
 
 struct Params
 { 
@@ -26,49 +28,114 @@ void prtdata(int nx, int ny, int ts, double *u1, char* fname);
 
 int main(int argc, char *argv[])
 {
+	int numtasks, taskid, chunksize, offset, source, tag1, tag2, dest, i, j;
+	MPI_Status status;
+	
+	MPI_Init(&argc, &argv);
+	MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
+	printf("%s", &numtasks);
 	double old_u[XDIM][YDIM];
 	double new_u[XDIM][YDIM];
+	double temp_u[XDIM][YDIM];
 	int ix, iy, iz, it, ts; /* iterators */
 	char buf[256], *str_end=".dat";
+	
+	MPI_Comm_rank(MPI_COMM_WORLD,&taskid);
+	printf ("MPI task %d has started...\n", taskid);
+	chunksize = (100 / numtasks-1);
+	tag2 = 1;
+	tag1 = 2;
+	if (taskid == MASTER){
+		printf("Starting serial version of 2D temperature distribution...\n");
+	
+		/* Read in grid dimension dim and allocate old_u and new_u */
+		printf("Using [%d][%d] grid.\n", XDIM, YDIM);
 
-	printf("Starting serial version of 2D temperature distribution...\n");
-
-	/* Read in grid dimension dim and allocate old_u and new_u */
-
-	printf("Using [%d][%d] grid.\n", XDIM, YDIM);
-
-	/* Read in grid sampling parameters and timesteps and initialize struct Params */
+		/* Read in grid sampling parameters and timesteps and initialize struct Params */
 
 
-	/* Initialize grid from input file */
-	printf("Initializing grid from input file:");
+		/* Initialize grid from input file */
+		printf("Initializing grid from input file:\n");
 
-	initdata(XDIM, YDIM, *old_u);
+		initdata(XDIM, YDIM, &old_u[0][0]);
+		
+		offset = 0;
+		for (dest=1; dest<numtasks; dest++) {
+		  for (i = offset; i <= offset+chunksize; i++) {
+		    for (j = 1; j <= YDIM; j++) {
+		      temp_u[i][j] = old_u[i][j];
+		      //printf("%f\n", temp_u[i][j]);
+		    }
+		  }
+		  //MPI_Send(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
+		  MPI_Send(temp_u, chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
+		  printf("Sent %d elements to task %d offset= %d\n",chunksize,dest,offset);
+		  offset = offset + chunksize;
+		}
+		
+		offset = 100-(100%(numtasks-1));
+		for (i = offset; i <= offset+chunksize; i++) {
+		  for (j = 1; j <= YDIM; j++) {
+		    temp_u[i][j] = old_u[i][j];
+		    //printf("%f\n", temp_u[i][j]);
+		  }
+		}
 
-	sprintf(buf,"initial_new_%d%s",0,str_end);
-	prtdata(XDIM, YDIM, 0, &old_u[0][0], buf);
+		for (i=1; i<numtasks; i++) {
+			source = i;
+			//MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
+			MPI_Recv(&old_u[offset][YDIM], chunksize, MPI_FLOAT, source, tag2, MPI_COMM_WORLD, &status);
+		}
+		
 
-	for (ix = 0; ix <= XDIM-1; ix++) {
-		new_u[ix][0] = old_u[ix][0];
-		new_u[ix][YDIM-1] = old_u[ix][YDIM-1];
+		sprintf(buf,"initial_new_%d%s",0,str_end);
+		prtdata(XDIM, YDIM, 0, &old_u[0][0], buf);
+
+		for (ix = 0; ix <= XDIM-1; ix++) {
+			new_u[ix][0] = old_u[ix][0];
+			new_u[ix][YDIM-1] = old_u[ix][YDIM-1];
+		}
+		for (iy = 0; iy <= YDIM-1; iy++) {
+			new_u[0][iy] = old_u[0][iy];
+			new_u[XDIM-1][iy] = old_u[XDIM-1][iy];
+		}
+
+		/* Iterate over all timesteps and create final output file (e.g. timestep = nts) */
+		for (it = 1; it <= params.nts; it++) {
+			if(it&1)
+	       		/* it is odd */
+				update(XDIM, YDIM, &old_u[0][0], &new_u[0][0]);
+			else 
+			/* it is even */
+				update(XDIM, YDIM, &new_u[0][0], &old_u[0][0]);
+
+			sprintf(buf,"final_new_%d%s",it,str_end);
+			printf("Done. Created output file: %d\n", it);
+			prtdata(XDIM, YDIM, it, &old_u[0][0], buf);
+		}
+		
 	}
-	for (iy = 0; iy <= YDIM-1; iy++) {
-		new_u[0][iy] = old_u[0][iy];
-		new_u[XDIM-1][iy] = old_u[XDIM-1][iy];
+	if (taskid > MASTER){
+		double temp_u2[chunksize][YDIM];
+		
+
+		printf("hello\n");
+		printf("%d\n",&old_u[0][0]);
+		/* Receive my portion of array from the master task */
+		source = MASTER;
+		//MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
+		MPI_Recv(temp_u2, chunksize, MPI_FLOAT, source, tag2, MPI_COMM_WORLD, &status);
+	 	
+		// update(offset, YDIM, &new_u[0][0], *temp_u);
+		
+		/* Send my results back to the master task */
+		dest = MASTER;
+		//MPI_Send(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
+		MPI_Send(temp_u, chunksize, MPI_FLOAT, MASTER, tag2, MPI_COMM_WORLD);
+
+		// MPI_Reduce(&mysum, &sum, 1, MPI_FLOAT, MPI_SUM, MASTER, MPI_COMM_WORLD);
 	}
-
-	/* Iterate over all timesteps and create final output file (e.g. timestep = nts) */
-
-	for (it = 1; it <= params.nts; it++) {
-		if(it&1) /* it is odd */
-			update(XDIM, YDIM, &old_u[0][0], &new_u[0][0]);
-		else /* it is even */
-			update(XDIM, YDIM, &new_u[0][0], &old_u[0][0]);
-
-		sprintf(buf,"final_new_%d%s",it,str_end);
-		printf("Done. Created output file: %d\n", it);
-		prtdata(XDIM, YDIM, it, &old_u[0][0], buf);
-	}
+	MPI_Finalize();
 }
 
 
