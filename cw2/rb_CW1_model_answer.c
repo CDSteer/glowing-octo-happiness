@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
     	* and send array3 to the root process. */
    		// 
    		// partial_sum = 0;
-        for(i = nodeoffset; i < num_rows_received; i++) {
+        for(i = nodeoffset; i < XDIM; i++) {
         	for(j = 0; j < YDIM; j++) {
             	//partial_sum += old_u2[i][j];
             	printf("element from %d: %1.1f\n", taskid, old_u[i][j]);
