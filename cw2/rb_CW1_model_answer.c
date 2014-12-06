@@ -87,9 +87,7 @@ int main(int argc, char *argv[])
             	printf("element master: %1.1f\n", old_u[i][j]);
         	}
         }
-
-        MPI_Barrier(MPI_Comm communicator);
-
+        MPI_Barrier(MPI_COMM_WORLD);
 		for (dest=1; dest<numtasks; dest++) {
 			source = i;
 			MPI_Recv(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD, &status);
@@ -103,7 +101,7 @@ int main(int argc, char *argv[])
 	        	}
         	}
 		}
-		
+				
 
 		sprintf(buf,"initial_new_%d%s",0,str_end);
 		prtdata(XDIM, YDIM, 0, &old_u[0][0], buf);
