@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 
    		/* Do something with array2 here, placing the result in array3,
     	* and send array3 to the root process. */
-   		update(offset, YDIM, &new_u[0][0], *temp_u);
+   		update(offset, YDIM, &new_u[0][0], *old_u2);
 
    		ierr = MPI_Send( &new_u, num_rows_to_return, MPI_FLOAT, MASTER, tag2, MPI_COMM_WORLD);
 
