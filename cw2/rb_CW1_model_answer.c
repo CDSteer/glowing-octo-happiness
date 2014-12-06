@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 
 		ierr = MPI_Recv( &offset, 1 , MPI_INT, MASTER, tag1, MPI_COMM_WORLD, &status);
 
-   		ierr = MPI_Recv( &old_u, chunksize*YDIM, MPI_DOUBLE, MASTER, tag2, MPI_COMM_WORLD, &status);
+   		ierr = MPI_Recv( &old_u, chunksize, MPI_DOUBLE, MASTER, tag2, MPI_COMM_WORLD, &status);
    		
    		num_rows_received = chunksize;  
    		nodeoffset = offset;
