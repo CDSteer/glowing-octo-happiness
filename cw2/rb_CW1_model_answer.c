@@ -69,15 +69,15 @@ int main(int argc, char *argv[])
 		
 		offset = 0;
 		for (dest=1; dest<numtasks; dest++) {
-			for ( ix = offset; ix < offset+chunksize; ix++ ){
+			//for ( ix = offset; ix < offset+chunksize; ix++ ){
 				ierr = MPI_Send( &offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
-      			ierr = MPI_Send( &old_u[0][0], chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
-      		}
-
+      			ierr = MPI_Send( &old_u[0][0], chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);	
+      		//}
+      		offset = offset + chunksize;
       		
 
 			printf("Sent %d elements to task %d offset= %d\n", chunksize, dest, offset);
-			offset = offset + chunksize;
+			
 		}
 		
 		offset = 100-(100%(numtasks-1));
