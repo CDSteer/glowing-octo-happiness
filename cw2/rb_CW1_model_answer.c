@@ -121,7 +121,8 @@ int main(int argc, char *argv[])
 			prtdata(XDIM, YDIM, it, &old_u[0][0], buf);
 		}
 		
-	} else (taskid > master){
+	}  
+	if (taskid > MASTER){
 
 		printf("Process %d said: Hello!\n", taskid);
 		//printf("%d\n",&old_u[0][0]);
