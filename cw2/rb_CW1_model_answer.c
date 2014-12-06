@@ -29,7 +29,7 @@ void prtdata(int nx, int ny, int ts, double *u1, char* fname);
 int main(int argc, char *argv[])
 {
 	int numtasks, taskid, num_rows_per_process, chunksize, chunksize_returned, offset, source, tag1, tag2, dest, i, j;
-
+	int nodeoffset;
 	int my_id, root_process, ierr, num_rows, num_procs,
          num_rows_to_receive, avg_rows_per_process, 
          sender, num_rows_received, start_row, end_row, num_rows_to_send, num_rows_to_return, partial_sum;
