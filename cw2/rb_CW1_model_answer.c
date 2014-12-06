@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 	MPI_Comm_rank(MPI_COMM_WORLD,&taskid);
 	ierr = MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 	printf ("MPI task %d has started...\n", taskid);
-	chunksize = (100 / numtasks-1);
+	chunksize = (100 / numtasks);
 	tag2 = 1;
 	tag1 = 2;
 	if (taskid == MASTER){
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 		ierr = MPI_Recv( &offset, 1 , MPI_INT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
    		ierr = MPI_Recv( &old_u2, num_rows_to_receive, MPI_FLOAT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-
+   		
    		num_rows_received = num_rows_to_receive;  
 
    		/* Do something with array2 here, placing the result in array3,
