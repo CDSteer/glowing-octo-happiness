@@ -37,8 +37,6 @@ int main(int argc, char *argv[])
 	MPI_Status status;
 	
 	MPI_Init(&argc, &argv);
-	MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
-	printf("%s", &numtasks);
 	double old_u[XDIM][YDIM];
 	double old_u2[XDIM][YDIM];
 	double new_u[XDIM][YDIM];
@@ -46,7 +44,8 @@ int main(int argc, char *argv[])
 	char buf[256], *str_end=".dat";
 	
 	MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
-	ierr = MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
+	MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
+	printf("number of tasks: %s\n", &numtasks);
 	printf ("MPI task %d has started...\n", taskid);
 	chunksize = (XDIM / numtasks);
 	tag2 = 1;
@@ -87,7 +86,7 @@ int main(int argc, char *argv[])
             	printf("element master: %1.1f\n", old_u[i][j]);
         	}
         }
-        MPI_Barrier(MPI_COMM_WORLD);
+
 		for (dest=1; dest<numtasks; dest++) {
 			source = i;
 			MPI_Recv(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD, &status);
