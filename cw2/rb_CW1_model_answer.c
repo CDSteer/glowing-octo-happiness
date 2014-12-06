@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
 	int my_id, root_process, ierr, num_rows, num_procs,
          num_rows_to_receive, avg_rows_per_process, 
-         sender, num_rows_received, start_row, end_row, num_rows_to_send, num_rows_to_return;
+         sender, num_rows_received, start_row, end_row, num_rows_to_send, num_rows_to_return, partial_sum;
 
 	MPI_Status status;
 	
