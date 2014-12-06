@@ -69,10 +69,10 @@ int main(int argc, char *argv[])
 		
 		offset = 0;
 		for (dest=1; dest<numtasks; dest++) {
-			//for ( ix = offset; ix < offset+chunksize; ix++ ){
+			for ( ix = offset; ix < offset+chunksize; ix++ ){
 				ierr = MPI_Send( &offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
-      			ierr = MPI_Send( &old_u[0][0], chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);	
-      		//}
+      			ierr = MPI_Send( &old_u[0][0], chunksize, MPI_DOUBLE, dest, tag2, MPI_COMM_WORLD);	
+      		}
       		offset = offset + chunksize;
       		
 
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 		for (i=1; i<numtasks; i++) {
 			source = i;
 			// MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
-			// MPI_Recv(&new_u, chunksize_returned, MPI_FLOAT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+			// MPI_Recv(&new_u, chunksize_returned, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		}
 		
 
@@ -128,20 +128,20 @@ int main(int argc, char *argv[])
 		/* Receive my portion of array from the master task */
 		// source = MASTER;
 		//MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
-		// temp_u2 = MPI_Recv(temp_u2, chunksize, MPI_FLOAT, source, tag2, MPI_COMM_WORLD, &status);
+		// temp_u2 = MPI_Recv(temp_u2, chunksize, MPI_DOUBLE, source, tag2, MPI_COMM_WORLD, &status);
 	 	
 		// update(offset, YDIM, &new_u[0][0], *temp_u);
 		
 		/* Send my results back to the master task */
 		// dest = MASTER;
 		//MPI_Send(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
-		// MPI_Send(temp_u, chunksize, MPI_FLOAT, MASTER, tag2, MPI_COMM_WORLD);
+		// MPI_Send(temp_u, chunksize, MPI_DOUBLE, MASTER, tag2, MPI_COMM_WORLD);
 
-		// MPI_Reduce(&mysum, &sum, 1, MPI_FLOAT, MPI_SUM, MASTER, MPI_COMM_WORLD);
+		// MPI_Reduce(&mysum, &sum, 1, MPI_DOUBLE, MPI_SUM, MASTER, MPI_COMM_WORLD);
 
 		ierr = MPI_Recv( &offset, 1 , MPI_INT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
-   		ierr = MPI_Recv( &old_u2, chunksize, MPI_FLOAT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+   		ierr = MPI_Recv( &old_u2, chunksize, MPI_DOUBLE, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
    		
    		num_rows_received = chunksize;  
    		nodeoffset = offset;
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
         }
         // printf("Process %d sum: %d\n", taskid, partial_sum);
 
-   		// ierr = MPI_Send( &new_u, num_rows_to_return, MPI_FLOAT, MASTER, tag2, MPI_COMM_WORLD);
+   		// ierr = MPI_Send( &new_u, num_rows_to_return, MPI_DOUBLE, MASTER, tag2, MPI_COMM_WORLD);
 
 
 	}
