@@ -170,6 +170,7 @@ int main(int argc, char *argv[])
          	for(j = 0; j < YDIM-2; i++) {
             	partial_sum += old_u2[i][j];
 
+         	}
          }
          printf("Process %d sum: %d\n", taskid, partial_sum);
 
