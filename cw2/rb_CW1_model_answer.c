@@ -70,8 +70,8 @@ int main(int argc, char *argv[])
 		offset = 0;
 		for (dest=1; dest<numtasks; dest++) {
 			for ( ix = offset; ix < offset+chunksize; ix++ ){
-				ierr = MPI_Send( &offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
-      			ierr = MPI_Send( old_u, chunksize, MPI_DOUBLE, dest, tag2, MPI_COMM_WORLD);	
+				ierr = MPI_Send(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
+      			ierr = MPI_Send(&old_u, chunksize*YDIM, MPI_DOUBLE, dest, tag2, MPI_COMM_WORLD);	
       		}
       		offset = offset + chunksize;
       		
@@ -139,9 +139,9 @@ int main(int argc, char *argv[])
 
 		// MPI_Reduce(&mysum, &sum, 1, MPI_DOUBLE, MPI_SUM, MASTER, MPI_COMM_WORLD);
 
-		ierr = MPI_Recv( &offset, 1 , MPI_INT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		ierr = MPI_Recv( &offset, 1 , MPI_INT, MASTER, tag1, MPI_COMM_WORLD, &status);
 
-   		ierr = MPI_Recv( old_u, chunksize, MPI_DOUBLE, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+   		ierr = MPI_Recv( &old_u, chunksize*YDIM, MPI_DOUBLE, MASTER, tag2, MPI_COMM_WORLD, &status);
    		
    		num_rows_received = chunksize;  
    		nodeoffset = offset;
