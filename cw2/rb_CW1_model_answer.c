@@ -78,7 +78,6 @@ int main(int argc, char *argv[])
 		 	// MPI_Send(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
 			// MPI_Send(temp_u, chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
 
-			start_row = 0;
             end_row   = chunksize;
 
             // if((XDIM - end_row) < avg_rows_per_process)
@@ -87,7 +86,7 @@ int main(int argc, char *argv[])
             num_rows_to_send = chunksize;
 
 			ierr = MPI_Send( &num_rows_to_send, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
-      		ierr = MPI_Send( &old_u[start_row][YDIM], num_rows_to_send, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
+      		ierr = MPI_Send( &old_u[offset][YDIM], num_rows_to_send, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
 
 		  printf("Sent %d elements to task %d offset= %d\n", chunksize, dest, offset);
 		  offset = offset + chunksize;
@@ -167,9 +166,9 @@ int main(int argc, char *argv[])
    		// update(num_rows_received, YDIM, &new_u[0][0], *old_u2);
    		partial_sum = 0;
          for(i = 0; i < num_rows_received; i++) {
-         	for(j = 0; j < YDIM-2; i++) {
-            	partial_sum += old_u2[i][j];
-
+         	for(j = 0; j < YDIM-2; j++) {
+            	//partial_sum += old_u2[i][j];
+            	partial_sum += *(old_u2+i*(YDIM-2)+j);
          	}
          }
          printf("Process %d sum: %d\n", taskid, partial_sum);
