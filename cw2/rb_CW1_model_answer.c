@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 		for (dest=1; dest<numtasks; dest++) {
 			for ( ix = offset; ix < offset+chunksize; ix++ ){
 				ierr = MPI_Send( &offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
-      			ierr = MPI_Send( &old_u[offset][YDIM], chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
+      			ierr = MPI_Send( &old_u[offset][0], chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
       		}
 
       		
