@@ -80,11 +80,11 @@ int main(int argc, char *argv[])
 			
 		}
 		
-		offset = 100-(100%(numtasks-1));
+		offset = YDIM-(YDIM%(numtasks-1));
 		for(i = offset; i < chunksize; i++) {
         	for(j = 0; j < YDIM-2; j++) {
             	//partial_sum += old_u2[i][j];
-            	// printf("element %d: %1.1f\n", taskid, old_u[i][j]);
+            	printf("element master: %1.1f\n", old_u[i][j]);
         	}
         }
 
