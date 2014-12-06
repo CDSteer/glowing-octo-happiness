@@ -28,11 +28,11 @@ void prtdata(int nx, int ny, int ts, double *u1, char* fname);
 
 int main(int argc, char *argv[])
 {
-	int numtasks, taskid, num_rows_per_process, chunksize, offset, source, tag1, tag2, dest, i, j;
+	int numtasks, taskid, num_rows_per_process, chunksize, chunksize_returned, offset, source, tag1, tag2, dest, i, j;
 
 	int my_id, root_process, ierr, num_rows, num_procs,
          num_rows_to_receive, avg_rows_per_process, 
-         sender, num_rows_received, start_row, end_row, num_rows_to_send;
+         sender, num_rows_received, start_row, end_row, num_rows_to_send, num_rows_to_return;
 
 	MPI_Status status;
 	
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
             num_rows_to_send = end_row - start_row + 1;
 
 			ierr = MPI_Send( &offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
-      		ierr = MPI_Send( &temp_u[offset][YDIM], chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
+      		ierr = MPI_Send( &old_u[offset][YDIM], chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
 
 		  printf("Sent %d elements to task %d offset= %d\n",chunksize,dest,offset);
 		  offset = offset + chunksize;
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
 
 		ierr = MPI_Recv( &num_rows_to_receive, 1 , MPI_INT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
-   		ierr = MPI_Recv( &array2, num_rows_to_receive, MPI_FLOAT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+   		ierr = MPI_Recv( &old_u2, num_rows_to_receive, MPI_FLOAT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
    		num_rows_received = num_rows_to_receive;  
 
@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
     	* and send array3 to the root process. */
    		update(offset, YDIM, &new_u[0][0], *temp_u);
 
-   		ierr = MPI_Send( &new_u, num_rows_to_return, MPI_FLOAT, MASTER, return_data_tag, MPI_COMM_WORLD);
+   		ierr = MPI_Send( &new_u, num_rows_to_return, MPI_FLOAT, MASTER, tag2, MPI_COMM_WORLD);
 
 
 	}
