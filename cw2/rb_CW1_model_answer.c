@@ -88,6 +88,8 @@ int main(int argc, char *argv[])
         	}
         }
 
+        MPI_Barrier(MPI_Comm communicator);
+
 		for (dest=1; dest<numtasks; dest++) {
 			source = i;
 			MPI_Recv(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD, &status);
@@ -146,7 +148,7 @@ int main(int argc, char *argv[])
 		//MPI_Send(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
 		// MPI_Send(temp_u, chunksize, MPI_DOUBLE, MASTER, tag2, MPI_COMM_WORLD);
 
-		// MPI_Reduce(&mysum, &sum, 1, MPI_DOUBLE, MPI_SUM, MASTER, MPI_COMM_WORLD);
+		// 
 
 		ierr = MPI_Recv( &offset, 1 , MPI_INT, MASTER, tag1, MPI_COMM_WORLD, &status);
 
@@ -165,9 +167,9 @@ int main(int argc, char *argv[])
    		MPI_Send(&offset, 1, MPI_INT, MASTER, tag1, MPI_COMM_WORLD);
    		MPI_Send(&old_u, chunksize*YDIM, MPI_DOUBLE, MASTER, tag2, MPI_COMM_WORLD);
 
-
-
+   		// MPI_Reduce(&mysum, &sum, 1, MPI_DOUBLE, MPI_SUM, MASTER, MPI_COMM_WORLD);
 	}
+
 	MPI_Finalize();
 }
 
