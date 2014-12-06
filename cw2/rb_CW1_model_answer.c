@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 
 		ierr = MPI_Recv( &offset, 1 , MPI_INT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
-   		ierr = MPI_Recv( &old_u2, num_rows_to_receive, MPI_FLOAT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+   		ierr = MPI_Recv( &old_u[offset][YDIM], num_rows_to_receive, MPI_FLOAT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
    		
    		num_rows_received = num_rows_to_receive;  
    		nodeoffset = offset;
@@ -146,10 +146,10 @@ int main(int argc, char *argv[])
     	* and send array3 to the root process. */
    		// update(num_rows_received, YDIM, &new_u[0][0], *old_u2);
    		// partial_sum = 0;
-        for(i = nodeoffset; i < num_rows_received; i++) {
+        for(i = 0; i < num_rows_received; i++) {
         	for(j = 0; j < YDIM-2; j++) {
             	//partial_sum += old_u2[i][j];
-            	printf("element from %d: %1.1f\n", taskid, old_u2[i][j]);
+            	printf("element from %d: %1.1f\n", taskid, old_u[i][j]);
         	}
         }
         // printf("Process %d sum: %d\n", taskid, partial_sum);
