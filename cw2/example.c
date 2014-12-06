@@ -34,7 +34,7 @@ int free2dchar(char ***array) {
 }
 
 int main(int argc, char **argv) {
-    int i;
+    int i, j, p;
     char **global, **local;
     const int gridsize=10; // size of grid
     const int procgridsize=2;  // size of process grid
