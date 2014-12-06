@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
 	// MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 	printf("%s", &numtasks);
 	double old_u[XDIM][YDIM];
+	double old_u2[XDIM][YDIM];
 	double new_u[XDIM][YDIM];
 	int ix, iy, iz, it, ts; /* iterators */
 	char buf[256], *str_end=".dat";
@@ -79,7 +80,7 @@ int main(int argc, char *argv[])
 		for(i = offset; i < num_rows_received; i++) {
         	for(j = 0; j < YDIM-2; j++) {
             	//partial_sum += old_u2[i][j];
-            	// printf("element %d: %1.1f\n", taskid, old_u2[i][j]);
+            	printf("element %d: %1.1f\n", taskid, old_u2[i][j]);
         	}
         }
 
@@ -119,7 +120,7 @@ int main(int argc, char *argv[])
 		}
 		
 	} else {
-		double old_u2[chunksize][YDIM];
+
 		// printf("Process %d said: Hello!\n", taskid);
 		//printf("%d\n",&old_u[0][0]);
 		/* Receive my portion of array from the master task */
