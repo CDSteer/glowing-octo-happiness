@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 		/* Initialize grid from input file */
 		printf("Initializing grid from input file:\n");
 
-		avg_rows_per_process = XDIM / numtasks;
+		avg_rows_per_process = XDIM / numtasks-1;
 
 		initdata(XDIM, YDIM, &old_u[0][0]);
 		
@@ -138,10 +138,9 @@ int main(int argc, char *argv[])
 		
 	}
 	if (taskid > MASTER){
-		double temp_u2[chunksize][YDIM];
 		
 
-		printf("Process %d said: Hello!\n", taskid);
+		// printf("Process %d said: Hello!\n", taskid);
 		//printf("%d\n",&old_u[0][0]);
 		/* Receive my portion of array from the master task */
 		// source = MASTER;
@@ -165,7 +164,14 @@ int main(int argc, char *argv[])
 
    		/* Do something with array2 here, placing the result in array3,
     	* and send array3 to the root process. */
-   		update(num_rows_received, YDIM, &new_u[0][0], *old_u2);
+   		// update(num_rows_received, YDIM, &new_u[0][0], *old_u2);
+   		partial_sum = 0;
+         for(i = 0; i < num_rows_received; i++) {
+         	for(j = 0; j < YDIM-2; i++) {
+            	partial_sum += old_u2[i][j];
+
+         }
+         printf("Process %d sum: %d\n", taskid, partial_sum);
 
    		ierr = MPI_Send( &new_u, num_rows_to_return, MPI_FLOAT, MASTER, tag2, MPI_COMM_WORLD);
 
