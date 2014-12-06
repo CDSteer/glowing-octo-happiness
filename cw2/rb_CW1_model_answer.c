@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
       		offset = offset + chunksize;
       		
 
-			printf("Sent %d elements to task %d offset= %d\n", chunksize, dest, offset);
+			printf("Sent %d rows to node %d offset= %d\n", chunksize, dest, offset);
 			
 		}
 		
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 			prtdata(XDIM, YDIM, it, &old_u[0][0], buf);
 		}
 		
-	} else {
+	} else (taskid > master){
 
 		printf("Process %d said: Hello!\n", taskid);
 		//printf("%d\n",&old_u[0][0]);
