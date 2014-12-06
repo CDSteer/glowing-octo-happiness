@@ -92,13 +92,13 @@ int main(int argc, char *argv[])
 		  offset = offset + chunksize;
 		}
 		
-		// offset = 100-(100%(numtasks-1));
-		// for (i = offset; i <= offset+chunksize; i++) {
-		//   for (j = 1; j <= YDIM; j++) {
-		//     // temp_u[i][j] = old_u[i][j];
-		//     // printf("%f\n", temp_u[i][j]);
-		//   }
-		// }
+		offset = 100-(100%(numtasks-1));
+		for(i = offset; i < num_rows_received; i++) {
+        	for(j = 0; j < YDIM-2; j++) {
+            	//partial_sum += old_u2[i][j];
+            	printf("element: %1.1f\n", old_u2[i][j]);
+        	}
+        }
 
 
 
@@ -162,14 +162,14 @@ int main(int argc, char *argv[])
    		/* Do something with array2 here, placing the result in array3,
     	* and send array3 to the root process. */
    		// update(num_rows_received, YDIM, &new_u[0][0], *old_u2);
-   		partial_sum = 0;
+   		// partial_sum = 0;
         for(i = offset; i < num_rows_received; i++) {
         	for(j = 0; j < YDIM-2; j++) {
             	//partial_sum += old_u2[i][j];
             	printf("element: %1.1f\n", old_u2[i][j]);
         	}
         }
-        printf("Process %d sum: %d\n", taskid, partial_sum);
+        // printf("Process %d sum: %d\n", taskid, partial_sum);
 
    		// ierr = MPI_Send( &new_u, num_rows_to_return, MPI_FLOAT, MASTER, tag2, MPI_COMM_WORLD);
 
