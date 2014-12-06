@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
 	char buf[256], *str_end=".dat";
 	
 	MPI_Comm_rank(MPI_COMM_WORLD,&taskid);
+	ierr = MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 	printf ("MPI task %d has started...\n", taskid);
 	chunksize = (100 / numtasks-1);
 	tag2 = 1;
