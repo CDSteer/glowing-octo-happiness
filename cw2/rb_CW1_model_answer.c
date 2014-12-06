@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 			ierr = MPI_Send( &num_rows_to_send, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
       		ierr = MPI_Send( &old_u[start_row][YDIM], num_rows_to_send, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
 
-		  printf("Sent %d elements to task %d offset= %d\n",chunksize,dest,offset);
+		  printf("Sent %d elements to task %d offset= %d\n", start_row, dest, num_rows_to_send);
 		  // offset = offset + chunksize;
 		}
 		
