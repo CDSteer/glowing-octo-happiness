@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
         for(i = offset; i < num_rows_received; i++) {
         	for(j = 0; j < YDIM-2; j++) {
             	//partial_sum += old_u2[i][j];
-            	printf("element: %1.1f\n", old_u2[i][j];
+            	printf("element: %1.1f\n", old_u2[i][j]);
         	}
         }
         printf("Process %d sum: %d\n", taskid, partial_sum);
