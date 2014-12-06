@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 			ierr = MPI_Send( &num_rows_to_send, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
       		ierr = MPI_Send( &old_u[start_row][YDIM], num_rows_to_send, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
 
-		  printf("Sent %d elements to task %d offset= %d\n", start_row, dest, num_rows_to_send);
+		  printf("Sent %d elements to task %d offset= %d\n", end_row, dest, num_rows_to_send);
 		  // offset = offset + chunksize;
 		}
 		
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
 		for (i=1; i<numtasks; i++) {
 			source = i;
 			//MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
-			MPI_Recv(&old_u2, chunksize_returned, MPI_FLOAT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+			MPI_Recv(&new_u, chunksize_returned, MPI_FLOAT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		}
 		
 
