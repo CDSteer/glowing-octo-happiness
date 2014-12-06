@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 
 		ierr = MPI_Recv( &offset, 1 , MPI_INT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
-   		ierr = MPI_Recv( old_u2, chunksize, MPI_DOUBLE, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+   		ierr = MPI_Recv( old_u, chunksize, MPI_DOUBLE, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
    		
    		num_rows_received = chunksize;  
    		nodeoffset = offset;
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
         for(i = nodeoffset; i < num_rows_received; i++) {
         	for(j = 0; j < YDIM; j++) {
             	//partial_sum += old_u2[i][j];
-            	printf("element from %d: %1.1f\n", taskid, old_u2[i][j]);
+            	printf("element from %d: %1.1f\n", taskid, old_u[i][j]);
         	}
         }
         // printf("Process %d sum: %d\n", taskid, partial_sum);
