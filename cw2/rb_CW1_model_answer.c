@@ -29,14 +29,19 @@ void prtdata(int nx, int ny, int ts, double *u1, char* fname);
 int main(int argc, char *argv[])
 {
 	int numtasks, taskid, num_rows_per_process, chunksize, offset, source, tag1, tag2, dest, i, j;
+
+	int my_id, root_process, ierr, num_rows, num_procs,
+         num_rows_to_receive, avg_rows_per_process, 
+         sender, num_rows_received, start_row, end_row, num_rows_to_send;
+
 	MPI_Status status;
 	
 	MPI_Init(&argc, &argv);
 	MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 	printf("%s", &numtasks);
 	double old_u[XDIM][YDIM];
+	double old_u2[XDIM][YDIM];
 	double new_u[XDIM][YDIM];
-	double temp_u[XDIM][YDIM];
 	int ix, iy, iz, it, ts; /* iterators */
 	char buf[256], *str_end=".dat";
 	
@@ -57,6 +62,8 @@ int main(int argc, char *argv[])
 		/* Initialize grid from input file */
 		printf("Initializing grid from input file:\n");
 
+		avg_rows_per_process = XDIM / numtasks;
+
 		initdata(XDIM, YDIM, &old_u[0][0]);
 		
 		offset = 0;
@@ -69,6 +76,14 @@ int main(int argc, char *argv[])
 		  // }
 		 	// MPI_Send(&offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
 			// MPI_Send(temp_u, chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
+
+			start_row = dest * avg_rows_per_process + 1;
+            end_row   = (dest + 1)*avg_rows_per_process;
+
+            if((XDIM - end_row) < avg_rows_per_process)
+               end_row = XDIM - 1;
+
+            num_rows_to_send = end_row - start_row + 1;
 
 			ierr = MPI_Send( &offset, 1, MPI_INT, dest, tag1, MPI_COMM_WORLD);
       		ierr = MPI_Send( &temp_u[offset][YDIM], chunksize, MPI_FLOAT, dest, tag2, MPI_COMM_WORLD);
@@ -84,6 +99,8 @@ int main(int argc, char *argv[])
 		    // printf("%f\n", temp_u[i][j]);
 		  }
 		}
+
+
 
 		for (i=1; i<numtasks; i++) {
 			source = i;
@@ -141,13 +158,15 @@ int main(int argc, char *argv[])
 
 		ierr = MPI_Recv( &num_rows_to_receive, 1 , MPI_INT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 
-   		ierr = MPI_Recv( &array2, num_rows_to_receive, MPI_FLOAT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);  
+   		ierr = MPI_Recv( &array2, num_rows_to_receive, MPI_FLOAT, MASTER, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+
+   		num_rows_received = num_rows_to_receive;  
 
    		/* Do something with array2 here, placing the result in array3,
     	* and send array3 to the root process. */
+   		update(offset, YDIM, &new_u[0][0], *temp_u);
 
-
-   		ierr = MPI_Send( &array3, num_rows_to_return, MPI_FLOAT, MASTER, return_data_tag, MPI_COMM_WORLD);
+   		ierr = MPI_Send( &new_u, num_rows_to_return, MPI_FLOAT, MASTER, return_data_tag, MPI_COMM_WORLD);
 
 
 	}
