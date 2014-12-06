@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 		for (i=1; i<numtasks; i++) {
 			source = i;
 			// MPI_Recv(&offset, 1, MPI_INT, source, tag1, MPI_COMM_WORLD, &status);
-			MPI_Recv(&new_u, chunksize*YDIM, MPI_DOUBLE, MPI_ANY_SOURCE, tag2, MPI_COMM_WORLD, &status);
+			MPI_Recv(&new_u, XDIM*YDIM, MPI_DOUBLE, MPI_ANY_SOURCE, tag2, MPI_COMM_WORLD, &status);
 		}
 		
 
@@ -156,9 +156,9 @@ int main(int argc, char *argv[])
         	}
         }
         // printf("Process %d sum: %d\n", taskid, partial_sum);
-        update(num_rows_received, YDIM, &new_u[0][0], *old_u);
+        //update(num_rows_received, YDIM, &new_u[0][0], *old_u);
 
-   		MPI_Send(&new_u, num_rows_to_return, MPI_DOUBLE, MASTER, tag2, MPI_COMM_WORLD);
+   		MPI_Send(&old_u, chunksize*YDIM, MPI_DOUBLE, MASTER, tag2, MPI_COMM_WORLD);
 
 
 	}
